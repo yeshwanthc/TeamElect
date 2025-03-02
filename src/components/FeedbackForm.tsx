@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useVoting } from '../context/VotingContext';
-import { MessageSquare, Send, AlertCircle } from 'lucide-react';
+import { MessageSquare, Send, AlertCircle, Check } from 'lucide-react';
+import { motion } from 'framer-motion';
+import toast from 'react-hot-toast';
 
 const FeedbackForm: React.FC = () => {
   const { submitFeedback, currentUser } = useVoting();
@@ -28,6 +30,7 @@ const FeedbackForm: React.FC = () => {
     submitFeedback(message);
     setMessage('');
     setSuccess(true);
+    toast.success('Thank you for your feedback!');
     setIsSubmitting(false);
     
     // Clear success message after 3 seconds
@@ -37,7 +40,12 @@ const FeedbackForm: React.FC = () => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
+    <motion.div 
+      className="bg-white rounded-lg shadow-md p-6"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+    >
       <div className="flex items-center mb-4">
         <MessageSquare size={20} className="mr-2 text-blue-600" />
         <h2 className="text-xl font-semibold">Feedback</h2>
@@ -48,16 +56,28 @@ const FeedbackForm: React.FC = () => {
       </p>
       
       {error && (
-        <div className="mb-4 p-3 bg-red-50 text-red-600 rounded flex items-start">
+        <motion.div 
+          className="mb-4 p-3 bg-red-50 text-red-600 rounded flex items-start"
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          transition={{ duration: 0.3 }}
+        >
           <AlertCircle size={18} className="mr-2 mt-0.5 flex-shrink-0" />
           <span>{error}</span>
-        </div>
+        </motion.div>
       )}
       
       {success && (
-        <div className="mb-4 p-3 bg-green-50 text-green-600 rounded">
-          Thank you for your feedback! Your message has been submitted.
-        </div>
+        <motion.div 
+          className="mb-4 p-3 bg-green-50 text-green-600 rounded flex items-start"
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          exit={{ opacity: 0, height: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <Check size={18} className="mr-2 mt-0.5 flex-shrink-0" />
+          <span>Thank you for your feedback! Your message has been submitted.</span>
+        </motion.div>
       )}
       
       <form onSubmit={handleSubmit}>
@@ -79,16 +99,18 @@ const FeedbackForm: React.FC = () => {
           )}
         </div>
         
-        <button
+        <motion.button
           type="submit"
           disabled={isSubmitting || !currentUser}
-          className="flex items-center justify-center bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 disabled:opacity-50"
+          className="flex items-center justify-center bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 disabled:opacity-50 transition-colors"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
         >
           <Send size={16} className="mr-2" />
           {isSubmitting ? 'Submitting...' : 'Submit Feedback'}
-        </button>
+        </motion.button>
       </form>
-    </div>
+    </motion.div>
   );
 };
 
